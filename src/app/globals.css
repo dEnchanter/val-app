@@ -1,26 +1,251 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pink-50: #fff5f8;
+  --pink-100: #ffe3ee;
+  --pink-200: #ffd1e3;
+  --pink-300: #ffb3d1;
+  --pink-500: #f33b8f;
+  --pink-600: #e42a7a;
+  --shadow: 0 14px 30px rgba(227, 84, 140, 0.18);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins);
+  --font-script: var(--font-dancing);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 50% 0%, rgba(255, 211, 230, 0.8), transparent 60%),
+    radial-gradient(800px 800px at 80% 80%, rgba(255, 196, 221, 0.8), transparent 60%),
+    linear-gradient(180deg, #fff7fb 0%, #ffe7f1 100%);
+  color: #5b1a3d;
+  overflow-x: hidden;
+  min-height: 100svh;
+}
+
+.card-shell {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+}
+
+.card-animate {
+  animation: card-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-swap {
+  animation: card-swap 380ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-pulse {
+  animation: btn-pulse 3.5s ease-in-out infinite;
+}
+
+.text-fade {
+  animation: text-fade 720ms ease-out;
+}
+
+.tap-optimize {
+  touch-action: manipulation;
+}
+
+.float-heart {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(145deg, #ff7da8, #ff4f8b);
+  transform: rotate(45deg);
+  opacity: 0.65;
+  animation-name: float-down;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.float-heart::before,
+.float-heart::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.float-heart::before {
+  top: -50%;
+  left: 0;
+}
+
+.float-heart::after {
+  left: -50%;
+  top: 0;
+}
+
+.sparkle {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.65), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(255, 233, 242, 0.8), transparent 45%),
+    radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.55), transparent 45%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 40;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 18px;
+  border-radius: 4px;
+  opacity: 0.9;
+  animation: confetti-fall 2200ms linear infinite;
+}
+
+.confetti-piece.round {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.confetti-piece.ribbon {
+  width: 6px;
+  height: 20px;
+  border-radius: 2px;
+}
+
+.confetti-piece.heart {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.confetti-piece.heart::before,
+.confetti-piece.heart::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: inherit;
+}
+
+.confetti-piece.heart::before {
+  top: -50%;
+  left: 0;
+}
+
+.confetti-piece.heart::after {
+  left: -50%;
+  top: 0;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff4f8b, #f02f78);
+  box-shadow: 0 10px 16px rgba(242, 63, 126, 0.35);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-ghost {
+  background: #e5e7eb;
+  color: #4b5563;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.btn-yes {
+  background: linear-gradient(135deg, #2ecc71, #1fa85a);
+  box-shadow: 0 10px 16px rgba(46, 204, 113, 0.35);
+  color: #ffffff;
+}
+
+@keyframes card-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes card-swap {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes btn-pulse {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 16px rgba(242, 63, 126, 0.35);
+  }
+  80% {
+    transform: scale(1.04);
+    box-shadow: 0 14px 22px rgba(242, 63, 126, 0.45);
+  }
+}
+
+@keyframes text-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-down {
+  0% {
+    transform: translateY(-12vh) rotate(45deg);
+  }
+  100% {
+    transform: translateY(110vh) rotate(45deg);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-15vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(115vh) rotate(260deg);
+    opacity: 0;
+  }
 }
