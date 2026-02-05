@@ -11,6 +11,7 @@ export default function Home() {
   ];
 
   const [step, setStep] = useState(0);
+  const [isFading, setIsFading] = useState(false);
   const [noOffset, setNoOffset] = useState({ x: 0, y: 0 });
   const [finalScreen, setFinalScreen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -20,24 +21,38 @@ export default function Home() {
   }, []);
 
   const hearts = [
-    { left: "6%", size: 12, duration: 12, delay: 0 },
-    { left: "16%", size: 18, duration: 15, delay: 2 },
-    { left: "28%", size: 10, duration: 11, delay: 4 },
-    { left: "40%", size: 14, duration: 14, delay: 1 },
-    { left: "52%", size: 20, duration: 16, delay: 3 },
-    { left: "64%", size: 12, duration: 13, delay: 6 },
-    { left: "76%", size: 16, duration: 15, delay: 5 },
-    { left: "88%", size: 11, duration: 12, delay: 7 },
-    { left: "10%", size: 16, duration: 17, delay: 8 },
-    { left: "34%", size: 13, duration: 13, delay: 9 },
-    { left: "58%", size: 18, duration: 16, delay: 10 },
-    { left: "82%", size: 12, duration: 12, delay: 11 },
+    { left: "6%", top: "12%", size: 12, duration: 12, delay: 0 },
+    { left: "16%", top: "24%", size: 18, duration: 15, delay: 2 },
+    { left: "28%", top: "8%", size: 10, duration: 11, delay: 4 },
+    { left: "40%", top: "34%", size: 14, duration: 14, delay: 1 },
+    { left: "52%", top: "18%", size: 20, duration: 16, delay: 3 },
+    { left: "64%", top: "40%", size: 12, duration: 13, delay: 6 },
+    { left: "76%", top: "28%", size: 16, duration: 15, delay: 5 },
+    { left: "88%", top: "46%", size: 11, duration: 12, delay: 7 },
+    { left: "10%", top: "52%", size: 16, duration: 17, delay: 8 },
+    { left: "34%", top: "60%", size: 13, duration: 13, delay: 9 },
+    { left: "58%", top: "70%", size: 18, duration: 16, delay: 10 },
+    { left: "82%", top: "78%", size: 12, duration: 12, delay: 11 },
+  ];
+
+  const fixedHearts = [
+    { left: "12%", top: "8%", size: 10 },
+    { left: "26%", top: "18%", size: 12 },
+    { left: "72%", top: "10%", size: 11 },
+    { left: "84%", top: "20%", size: 9 },
+    { left: "6%", top: "38%", size: 8 },
+    { left: "90%", top: "44%", size: 12 },
+    { left: "18%", top: "66%", size: 10 },
+    { left: "40%", top: "78%", size: 12 },
+    { left: "64%", top: "72%", size: 9 },
+    { left: "80%", top: "62%", size: 11 },
   ];
 
   const confettiPieces = useMemo(() => {
     if (!mounted || !finalScreen) return [];
     return Array.from({ length: 140 }).map((_, index) => {
       const left = Math.random() * 100;
+      const top = Math.random() * 50 + 10;
       const delay = Math.random() * 1.2;
       const rotate = Math.random() * 360;
       const size = 6 + Math.random() * 10;
@@ -55,6 +70,7 @@ export default function Home() {
       return {
         id: index,
         left: `${left}%`,
+        top: `${top}%`,
         delay: `${delay}s`,
         rotate: `${rotate}deg`,
         size: `${size}px`,
@@ -67,9 +83,12 @@ export default function Home() {
   }, [mounted, finalScreen]);
 
   const handleNext = () => {
-    if (step < messages.length) {
+    if (step >= messages.length || isFading) return;
+    setIsFading(true);
+    window.setTimeout(() => {
       setStep((prev) => prev + 1);
-    }
+      setIsFading(false);
+    }, 800);
   };
 
   const handleNoMove = () => {
@@ -86,16 +105,29 @@ export default function Home() {
     <div className="relative min-h-screen overflow-hidden px-4 py-10">
       <div className="absolute inset-0 -z-10">
         <div className="sparkle" />
+        {fixedHearts.map((heart, index) => (
+          <span
+            key={`fixed-${index}`}
+            className="fixed-heart"
+            style={{
+              left: heart.left,
+              top: heart.top,
+              width: heart.size,
+              height: heart.size,
+            }}
+          />
+        ))}
         {hearts.map((heart, index) => (
           <span
             key={index}
             className="float-heart"
             style={{
               left: heart.left,
+              top: heart.top,
               width: heart.size,
               height: heart.size,
               animationDuration: `${heart.duration}s`,
-              animationDelay: `${heart.delay}s`,
+              animationDelay: `-${heart.delay}s`,
               opacity: 0.4 + (index % 4) * 0.12,
             }}
           />
@@ -104,11 +136,13 @@ export default function Home() {
 
       <main className="mx-auto flex min-h-[100svh] w-full max-w-[420px] flex-col items-center justify-center gap-8 text-center">
         {!finalScreen && step < messages.length && (
-          <div
-            key={`step-${step}`}
-            className="card-shell card-swap relative w-[88vw] max-w-[360px] rounded-[28px] px-6 py-10"
-          >
-            <div className="text-fade mx-auto text-[28px] font-semibold text-[#d33576]">
+          <div className="card-shell relative w-[88vw] max-w-[360px] rounded-[28px] px-6 py-10">
+            <div
+              key={`message-${step}`}
+              className={`mx-auto text-[28px] font-semibold text-[#d33576] ${
+                isFading ? "text-fade-out" : "text-fade-in"
+              }`}
+            >
               {messages[step]}
             </div>
             <div className="mt-6 flex justify-center">
@@ -129,10 +163,10 @@ export default function Home() {
             className="card-swap flex w-[88vw] max-w-[360px] flex-col items-center gap-5 rounded-[30px] bg-white/80 px-6 py-8 shadow-[0_18px_35px_rgba(227,84,140,0.2)] backdrop-blur"
           >
             <div className="text-4xl text-[#f2387f]">❤</div>
-            <h2 className="text-fade font-[var(--font-dancing)] text-[30px] font-semibold text-[#cf2f70]">
+            <h2 className="text-fade-in font-[var(--font-dancing)] text-[30px] font-semibold text-[#cf2f70]">
               Will you be my Valentine?
             </h2>
-            <p className="text-fade text-sm text-[#7a2a53]">
+            <p className="text-fade-in text-sm text-[#7a2a53]">
               (I promise to buy you chocolate 🍫)
             </p>
             <div className="relative mt-2 flex h-16 w-full items-center justify-center gap-3">
@@ -162,10 +196,10 @@ export default function Home() {
         {finalScreen && (
           <div className="card-shell card-swap relative w-[88vw] max-w-[360px] rounded-[30px] px-6 py-10 text-center">
             <div className="text-3xl">🥰 🎉</div>
-            <h2 className="text-fade mt-3 font-[var(--font-dancing)] text-[34px] font-semibold text-[#d12f73]">
+            <h2 className="text-fade-in mt-3 font-[var(--font-dancing)] text-[34px] font-semibold text-[#d12f73]">
               She said YES!
             </h2>
-            <p className="text-fade mt-3 text-sm text-[#7a2a53]">
+            <p className="text-fade-in mt-3 text-sm text-[#7a2a53]">
               You just made me the happiest person in the world. I love you! ❤️
             </p>
           </div>
@@ -173,13 +207,14 @@ export default function Home() {
       </main>
 
       {finalScreen && (
-        <div className="confetti">
+        <div className="confetti confetti-fade">
           {confettiPieces.map((piece) => (
             <span
               key={piece.id}
               className={`confetti-piece ${piece.shape}`}
               style={{
                 left: piece.left,
+                top: piece.top,
                 backgroundColor: piece.color,
                 width: piece.size,
                 height: piece.size,
